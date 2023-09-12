@@ -1,5 +1,7 @@
 package br.com.pacto.desafio.services;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +31,30 @@ public class ContaService {
 		return contaRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada."));
 	}
+
+	@Transactional
+	public void atualizarSaldoConta(Long id, BigDecimal novoLimite) {
+		Conta conta = contaRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada."));
+		
+		conta.setDataLimite(LocalDateTime.now());
+		conta.setLimiteDisponivel(novoLimite);
+		contaRepository.save(conta);
+	}
+
+//	@Transactional
+//	public void depositar(Long id, BigDecimal valorDeposito) {
+//		Conta conta = contaRepository.findById(id)
+//				.orElseThrow(() -> new EntityNotFoundException("Conta não encontrada."));
+//		
+//		if(valorDeposito.compareTo(BigDecimal.ZERO) <= 0) {
+//			throw new IllegalArgumentException("Valor de depósito inválido.");
+//		}
+//		
+//		BigDecimal novoLimite = conta.getLimiteDisponivel().add(valorDeposito);
+//		conta.setLimiteDisponivel(novoLimite);
+//		conta.setDataLimite(LocalDateTime.now());
+//		contaRepository.save(conta);
+//	}
 
 }

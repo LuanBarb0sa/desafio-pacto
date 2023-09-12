@@ -19,34 +19,35 @@ import jakarta.persistence.EntityNotFoundException;
 @RestController
 @RequestMapping("/transacao")
 public class TransacaoResource {
-	
+
 	@Autowired
 	private TransacaoService transacaoService;
-	
-	
+
 	@PostMapping
 	public ResponseEntity incluirTransacao(@RequestBody TransacaoDTO transacaoDTO) {
-	    try {
-	        transacaoService.incluirTransacao(transacaoDTO);
-	        return ResponseEntity.ok().build();
-	    } catch (EntityNotFoundException e) {
-	        // Trata a exceção de conta não encontrada
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Conta não encontrada com o ID fornecido.");
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor.");
-	    }
+		try {
+			transacaoService.incluirTransacao(transacaoDTO);
+			return ResponseEntity.ok().build();
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Conta não encontrada com o ID fornecido.");
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor.");
+		}
+		
 	}
-	
+
 	@GetMapping("/transacoes")
 	public ResponseEntity<List<Transacao>> listarTransacoes() {
-	    try {
-	        List<Transacao> transacoes = transacaoService.listarTodasTransacoes();
-	        return ResponseEntity.ok(transacoes);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
+		try {
+			List<Transacao> transacoes = transacaoService.listarTodasTransacoes();
+			return ResponseEntity.ok(transacoes);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 }
